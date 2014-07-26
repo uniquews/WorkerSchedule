@@ -3,6 +3,7 @@ package app;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -31,9 +32,9 @@ public class ReadJsonFile {
 				JsonObject eachPerson = jsonObj.getJsonArray("PersonalShoppers").getJsonObject(i);
 				
 				String name = eachPerson.getString("Name");
-				Person shooper = new Person();
+				Person shopper = new Person();
 //				System.out.println(name); // name
-				shooper.setName(name);
+				shopper.setName(name);
 				
 				JsonArray availability = eachPerson.getJsonArray("Availability");
 //				System.out.println(availability);
@@ -49,12 +50,65 @@ public class ReadJsonFile {
 						int start = eachPeriod.getInt("From");
 						int end = eachPeriod.getInt("To");
 						String dayAndTime = dayName +" From "+ start + " To "+end;
+						int rawSlot = end - start;
+						if(rawSlot <2){
+							System.out.println("The "+name +" "+ dayAndTime +" was not added in list");
+							continue;
+						}
+						ArrayList<Range> allPossibleRange = new ArrayList<Range>();
+						
+						for(int k=2; k<=rawSlot; k++){
+							int tempEnd = start+k;
+							Range newRange = new Range(start, tempEnd);
+							allPossibleRange.add(newRange);
+						}
+						
+						shopper.setRawSlot(rawSlot);
 //						System.out.println(dayAndTime);
-						shooper.setAvailablePeriod(dayAndTime);
+						shopper.setAvailablePeriod(dayAndTime);
+						
+						switch(dayName){
+						case "Monday": 
+							for(Range r:allPossibleRange){
+								shopper.setAllAvailableSlots("Mon", r);
+							}
+							break;
+						case "Tuesday": 
+							for(Range r:allPossibleRange){
+								shopper.setAllAvailableSlots("Tu", r);
+							}
+							break;
+						case "Wednesday": 
+							for(Range r:allPossibleRange){
+								shopper.setAllAvailableSlots("Wed", r);
+							}
+							break;
+						case "Thursday": 
+							for(Range r:allPossibleRange){
+								shopper.setAllAvailableSlots("Th", r);
+							}
+							break;
+						case "Friday": 
+							for(Range r:allPossibleRange){
+								shopper.setAllAvailableSlots("Fr", r);
+							}
+							break;
+						case "Saturday": 
+							for(Range r:allPossibleRange){
+								shopper.setAllAvailableSlots("Sat", r);
+							}
+						case "Sunday": 
+							for(Range r:allPossibleRange){
+								shopper.setAllAvailableSlots("Sun", r);
+							}
+							break;
+						}
+						
+						allPossibleRange.clear();
 					}
 				}
 				
-				people.setShoppers(shooper);
+				people.setShoppers(shopper);
 			}
 
 			
