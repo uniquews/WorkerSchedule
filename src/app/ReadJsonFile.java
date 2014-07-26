@@ -57,10 +57,19 @@ public class ReadJsonFile {
 						}
 						ArrayList<Range> allPossibleRange = new ArrayList<Range>();
 						
-						for(int k=2; k<=rawSlot; k++){
-							int tempEnd = start+k;
-							Range newRange = new Range(start, tempEnd);
+						for(int k=start, step = 2; k<=end-2; k+=step){
+							int tempEnd = k+2;
+							int remain = end - tempEnd;
+							if(tempEnd > end)
+								break;
+						   
+							Range newRange = new Range(k, tempEnd);
 							allPossibleRange.add(newRange);
+							
+							if(remain == 1){
+								Range newRange2 = new Range(k, end);
+								allPossibleRange.add(newRange2);
+							}
 						}
 						
 						shopper.setRawSlot(rawSlot);
@@ -97,6 +106,7 @@ public class ReadJsonFile {
 							for(Range r:allPossibleRange){
 								shopper.setAllAvailableSlots("Sat", r);
 							}
+							break;
 						case "Sunday": 
 							for(Range r:allPossibleRange){
 								shopper.setAllAvailableSlots("Sun", r);
