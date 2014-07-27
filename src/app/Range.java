@@ -8,6 +8,14 @@ public class Range{
 	}
 	private int start;
 	private int end;
+	private boolean choosen = false;
+	
+	public boolean isChoosen() {
+		return choosen;
+	}
+	public void setChoosen(boolean choosen) {
+		this.choosen = choosen;
+	}
 	public int getStart() {
 		return start;
 	}

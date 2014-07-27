@@ -9,6 +9,11 @@ public class ConvertDayToPerson {
 
 	private HashMap<String, HashMap<Range, Vector<Person>>> DayRangeToPerson = new HashMap<String, HashMap<Range, Vector<Person>>>();
 
+	public HashMap<String, HashMap<Range, Vector<Person>>> getDayRangeToPerson() {
+		return DayRangeToPerson;
+	}
+
+
 	public void convert(Persons shoppers) {
 
 		ArrayList<Person> shopperList = shoppers.getShoppers();

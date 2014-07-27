@@ -2,17 +2,38 @@ package app;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 public class Person {
 	private String name;
+	
 	//A sentence describes the available time
 	private ArrayList <String> availablePeriod = new ArrayList<String>();
 	
 	//The total available time sum
 	private int rawSlot = 0;
 	
+	//The total working hours now
+	private int satisfiedHours = 0;
+	
+	// In order to fill at least 8 hours, how many hours do he/she need
+	private int needHours = 8;
+	
+	public int getNeedHours() {
+		return needHours;
+	}
+	
+	public void updateNeedHours(){
+		this.needHours = 8 - satisfiedHours;
+		return;
+	}
+	
+	public int getSatisfiedHours() {
+		return satisfiedHours;
+	}
+	public void updateSatisfiedHours(int satisfiedHours) {
+		this.satisfiedHours += satisfiedHours;
+	}
 	//Monday -- Range
 	private HashMap<String, Vector<Range> > allAvailableSlots = new HashMap<String, Vector<Range> >();
 	
@@ -22,6 +43,10 @@ public class Person {
 	}
 	public void setRawSlot(int rawSlot) {
 		this.rawSlot += rawSlot;
+	}
+	
+	public void updateRawSlot (int rawSlot){
+		this.rawSlot = rawSlot;
 	}
 
 	public HashMap<String, Vector<Range>> getAllAvailableSlots() {
