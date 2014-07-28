@@ -54,13 +54,17 @@ public class ReadJsonFileTest {
 		
 		ConvertDayToPerson con = new ConvertDayToPerson();
 		con.convert(shoppers);
-		con.displayDayRangeToPerson();
+//		con.displayDayRangeToPerson();
 		
 		
 		Schedule sch = new Schedule(con);
 		sch.scheduleNonConflictRanges();
-		displayPersons(shopperList);
 		sch.setUnsatisfiedPerson(shopperList);
+		sch.beforeScheduleCheckRange();
+		sch.scheduleConflict();
+		sch.afterSchduleConflictSetRange();
+//		displayPersons(shopperList);
+//		sch.setUnsatisfiedPerson(shopperList);
 		
 		
 		

@@ -28,11 +28,12 @@ public class Person {
 		return;
 	}
 	
+	
 	public int getSatisfiedHours() {
 		return satisfiedHours;
 	}
 	public void updateSatisfiedHours(int satisfiedHours) {
-		this.satisfiedHours += satisfiedHours;
+		this.satisfiedHours = satisfiedHours;
 	}
 	//Monday -- Range
 	private HashMap<String, Vector<Range> > allAvailableSlots = new HashMap<String, Vector<Range> >();

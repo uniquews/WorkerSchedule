@@ -17,6 +17,10 @@ public class EachHour {
 	public void setChoosen(boolean choosen) {
 		this.choosen = choosen;
 	}
+	
+	public boolean getChoose(){
+		return choosen;
+	}
 
 	private boolean choosen;
 	
