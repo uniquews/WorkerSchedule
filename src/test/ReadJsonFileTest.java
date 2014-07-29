@@ -63,7 +63,7 @@ public class ReadJsonFileTest {
 		sch.beforeScheduleCheckRange();
 		sch.scheduleConflict();
 		sch.afterSchduleConflictSetRange();
-//		displayPersons(shopperList);
+		displayPersons(shopperList);
 //		sch.setUnsatisfiedPerson(shopperList);
 		
 		

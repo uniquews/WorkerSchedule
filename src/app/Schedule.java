@@ -79,8 +79,8 @@ public class Schedule {
 							person.updateRawSlot(person.getRawSlot() - (end - start));
 							person.updateSatisfiedHours(person.getSatisfiedHours() + (end - start));
 							person.updateNeedHours();
-							
-							System.out.println(person.getName() +" will work on "+ dayName + " from "+start +" to "+end);
+
+							System.out.println(person.getName() + " will work on " + dayName + " from " + start + " to " + end);
 
 						}
 
@@ -100,8 +100,8 @@ public class Schedule {
 			}
 		}
 
-//		displayConflictPersonInARange();
-//		displayEachDayHour();
+		// displayConflictPersonInARange();
+		// displayEachDayHour();
 
 		return;
 
@@ -176,7 +176,7 @@ public class Schedule {
 					System.out.println("Cannot generate successful plan for workers. Please enlarge " + p.getName() + " available working time");
 					return;
 				} else {
-//					System.out.println(p.getName());
+					// System.out.println(p.getName());
 					this.unsatidfiedPersons.add(p);
 				}
 			}
@@ -225,14 +225,15 @@ public class Schedule {
 
 	public void scheduleConflict() {
 		for (Map.Entry<String, ArrayList<HashMap<Range, Vector<Person>>>> eachDay : this.diffDayWithRangeAndConflictPerson.entrySet()) {
-//			String dayName = eachDay.getKey();
-//			Vector<EachHour> todayEachHour = dayTime.get(dayName);
-			//+++++++++++++++++++++++++++++++++++++output++++++++++++++++++++++++++++++++++++
-//			System.out.println("++++++++++++++++++Check today each hour+++++++++++++++++++++");
-//			for (EachHour eh : todayEachHour) {
-//				System.out.print(eh.getHour() + " " + eh.getChoose() + ";       ");
-//			}
-//			System.out.println();
+			String dayName = eachDay.getKey();
+			// Vector<EachHour> todayEachHour = dayTime.get(dayName);
+			// +++++++++++++++++++++++++++++++++++++output++++++++++++++++++++++++++++++++++++
+			// System.out.println("++++++++++++++++++Check today each hour+++++++++++++++++++++");
+			// for (EachHour eh : todayEachHour) {
+			// System.out.print(eh.getHour() + " " + eh.getChoose() +
+			// ";       ");
+			// }
+			// System.out.println();
 
 			ArrayList<HashMap<Range, Vector<Person>>> allRangesInSameDay = eachDay.getValue();
 
@@ -286,83 +287,104 @@ public class Schedule {
 						for (Person unSatisfiedPerson : this.unsatidfiedPersons) {
 							if (allPersonsInRange.contains(unSatisfiedPerson) && unSatisfiedPerson.getNeedHours() > 0) {
 								// If one person work
-								unSatisfiedPerson.updateRawSlot(unSatisfiedPerson.getRawSlot() - (end - start));
-								unSatisfiedPerson.updateSatisfiedHours(unSatisfiedPerson.getSatisfiedHours() + (end - start));
-								unSatisfiedPerson.updateNeedHours();
-								for (Person otherUnSatisfiedPerson : this.unsatidfiedPersons) {
-									// others cannot choose to work
-									if (otherUnSatisfiedPerson.getName() != unSatisfiedPerson.getName() && allPersonsInRange.contains(otherUnSatisfiedPerson)
-											&& otherUnSatisfiedPerson.getNeedHours() > 0) {
-										int remainAvailable = otherUnSatisfiedPerson.getRawSlot();
-										remainAvailable -= (end - start);
-										otherUnSatisfiedPerson.updateRawSlot(remainAvailable);
+
+								boolean canChooseInBackTrack = true;
+								for (int timeIndexForBackTrack = start; timeIndexForBackTrack < end; timeIndexForBackTrack++) {
+									for (EachHour eachHour : timeList) {
+										if (eachHour.getHour() == timeIndexForBackTrack) {
+											if (eachHour.isChoosen() == true) {
+												canChooseInBackTrack = false;
+												break;
+											}
+										}
 									}
 								}
 
-								// check all unsatisfied person could continue
-								if (checkChoosingCorrent() == false) {
-									// assign fail, we need to roll back
-									unSatisfiedPerson.updateRawSlot(unSatisfiedPerson.getRawSlot() + (end - start));
-									unSatisfiedPerson.updateSatisfiedHours(unSatisfiedPerson.getSatisfiedHours() - (end - start));
+								if (canChooseInBackTrack) {
+									unSatisfiedPerson.updateRawSlot(unSatisfiedPerson.getRawSlot() - (end - start));
+									unSatisfiedPerson.updateSatisfiedHours(unSatisfiedPerson.getSatisfiedHours() + (end - start));
 									unSatisfiedPerson.updateNeedHours();
-
 									for (Person otherUnSatisfiedPerson : this.unsatidfiedPersons) {
 										// others cannot choose to work
 										if (otherUnSatisfiedPerson.getName() != unSatisfiedPerson.getName() && allPersonsInRange.contains(otherUnSatisfiedPerson)
 												&& otherUnSatisfiedPerson.getNeedHours() > 0) {
 											int remainAvailable = otherUnSatisfiedPerson.getRawSlot();
-											remainAvailable += (end - start);
+											remainAvailable -= (end - start);
 											otherUnSatisfiedPerson.updateRawSlot(remainAvailable);
 										}
 									}
 
-									// try next person in unsatisfied list
-									continue;
-								} else {
-									// assign success
+									// check all unsatisfied person could
+									// continue
+									if (checkChoosingCorrent() == false) {
+										// assign fail, we need to roll back
+										unSatisfiedPerson.updateRawSlot(unSatisfiedPerson.getRawSlot() + (end - start));
+										unSatisfiedPerson.updateSatisfiedHours(unSatisfiedPerson.getSatisfiedHours() - (end - start));
+										unSatisfiedPerson.updateNeedHours();
 
-									r.setChoosen(true);
-									for (int timeIndex = start; timeIndex < end; timeIndex++) {
-										for (EachHour eachHour : timeList) {
-											if (eachHour.getHour() == timeIndex) {
-												eachHour.setChoosen(true);
+										for (Person otherUnSatisfiedPerson : this.unsatidfiedPersons) {
+											// others cannot choose to work
+											if (otherUnSatisfiedPerson.getName() != unSatisfiedPerson.getName() && allPersonsInRange.contains(otherUnSatisfiedPerson)
+													&& otherUnSatisfiedPerson.getNeedHours() > 0) {
+												int remainAvailable = otherUnSatisfiedPerson.getRawSlot();
+												remainAvailable += (end - start);
+												otherUnSatisfiedPerson.updateRawSlot(remainAvailable);
 											}
 										}
-									}
-									System.out.println(unSatisfiedPerson.getName() +" will work on "+ dayName + " from "+start +" to "+end);
-									dfsMapEntry(eachDay, allRangesInSameDay, i + 1);
 
-									// unSatisfiedPerson.updateRawSlot(unSatisfiedPerson.getRawSlot()
-									// + (end - start));
-									// unSatisfiedPerson.updateSatisfiedHours(unSatisfiedPerson.getSatisfiedHours()
-									// - (end - start));
-									// unSatisfiedPerson.updateNeedHours();
-									//
-									// for (Person otherUnSatisfiedPerson :
-									// this.unsatidfiedPersons) {
-									// // others cannot choose to work
-									// if (otherUnSatisfiedPerson.getName() !=
-									// unSatisfiedPerson.getName() &&
-									// allPersonsInRange.contains(otherUnSatisfiedPerson))
-									// {
-									// int remainAvailable =
-									// otherUnSatisfiedPerson.getRawSlot();
-									// remainAvailable += (end - start);
-									// otherUnSatisfiedPerson.updateRawSlot(remainAvailable);
-									// }
-									// }
-									//
-									// r.setChoosen(false);
-									// for (int timeIndex = start; timeIndex <
-									// end; timeIndex++) {
-									// for (EachHour eachHour : timeList) {
-									// if (eachHour.getHour() == timeIndex) {
-									// eachHour.setChoosen(false);
-									// }
-									// }
-									// }
+										// try next person in unsatisfied list
+										continue;
+									} else {
+										// assign success
+
+										r.setChoosen(true);
+										for (int timeIndex = start; timeIndex < end; timeIndex++) {
+											for (EachHour eachHour : timeList) {
+												if (eachHour.getHour() == timeIndex) {
+													eachHour.setChoosen(true);
+												}
+											}
+										}
+										System.out.println(unSatisfiedPerson.getName() + " will work on " + dayName + " from " + start + " to " + end);
+										dfsMapEntry(eachDay, allRangesInSameDay, i + 1);
+
+										// unSatisfiedPerson.updateRawSlot(unSatisfiedPerson.getRawSlot()
+										// + (end - start));
+										// unSatisfiedPerson.updateSatisfiedHours(unSatisfiedPerson.getSatisfiedHours()
+										// - (end - start));
+										// unSatisfiedPerson.updateNeedHours();
+										//
+										// for (Person otherUnSatisfiedPerson :
+										// this.unsatidfiedPersons) {
+										// // others cannot choose to work
+										// if (otherUnSatisfiedPerson.getName()
+										// !=
+										// unSatisfiedPerson.getName() &&
+										// allPersonsInRange.contains(otherUnSatisfiedPerson))
+										// {
+										// int remainAvailable =
+										// otherUnSatisfiedPerson.getRawSlot();
+										// remainAvailable += (end - start);
+										// otherUnSatisfiedPerson.updateRawSlot(remainAvailable);
+										// }
+										// }
+										//
+										// r.setChoosen(false);
+										// for (int timeIndex = start; timeIndex
+										// <
+										// end; timeIndex++) {
+										// for (EachHour eachHour : timeList) {
+										// if (eachHour.getHour() == timeIndex)
+										// {
+										// eachHour.setChoosen(false);
+										// }
+										// }
+										// }
+
+									}
 
 								}
+
 							}
 						}
 
@@ -421,6 +443,5 @@ public class Schedule {
 
 		return true;
 	}
-	
-	
+
 }
